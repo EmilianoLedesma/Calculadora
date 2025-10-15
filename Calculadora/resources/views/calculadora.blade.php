@@ -133,6 +133,7 @@
 
             <button class="boton limpiar" onclick="limpiar()">C</button>
             <button class="boton operador" onclick="borrar()">←</button>
+            <button class="boton operador" onclick="calcularRaiz()">√</button>
             <button class="boton operador" onclick="agregarOperador('/')">/</button>
 
             <button class="boton numero" onclick="agregarNumero('7')">7</button>
@@ -199,12 +200,33 @@
 
             const valorActual = parseFloat(pantallaValor);
 
-            // Solo la multiplicación está implementada
+            // Multiplicación
             if (operadorActual === '*') {
                 try {
                     const response = await fetch('/multiplicar', {
-            // Solo la división está implementada
-            if (operadorActual === '/') {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    if (!response.ok) {
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+            }
+            // División
+            else if (operadorActual === '/') {
                 try {
                     const response = await fetch('/dividir', {
                         method: 'POST',
@@ -218,10 +240,7 @@
                         })
                     });
 
-                    const data = await response.json();
-                    pantallaValor = data.resultado.toString();
                     if (!response.ok) {
-                        const errorData = await response.json();
                         pantallaValor = 'Error';
                     } else {
                         const data = await response.json();
@@ -235,6 +254,35 @@
 
             operadorActual = null;
             valorAnterior = null;
+            reiniciarPantalla = true;
+            actualizarPantalla();
+        }
+
+        async function calcularRaiz() {
+            const valorActual = parseFloat(pantallaValor);
+
+            try {
+                const response = await fetch('/raiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        num: valorActual
+                    })
+                });
+
+                if (!response.ok) {
+                    pantallaValor = 'Error';
+                } else {
+                    const data = await response.json();
+                    pantallaValor = data.resultado.toString();
+                }
+            } catch (error) {
+                pantallaValor = 'Error';
+            }
+
             reiniciarPantalla = true;
             actualizarPantalla();
         }
