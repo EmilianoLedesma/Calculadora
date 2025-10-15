@@ -203,6 +203,10 @@
             if (operadorActual === '*') {
                 try {
                     const response = await fetch('/multiplicar', {
+            // Solo la división está implementada
+            if (operadorActual === '/') {
+                try {
+                    const response = await fetch('/dividir', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -216,6 +220,13 @@
 
                     const data = await response.json();
                     pantallaValor = data.resultado.toString();
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
                 } catch (error) {
                     pantallaValor = 'Error';
                 }
