@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Calculadora Sencilla</title>
     <style>
         * {
@@ -132,47 +133,111 @@
 
             <button class="boton limpiar" onclick="limpiar()">C</button>
             <button class="boton operador" onclick="borrar()">←</button>
-            <button class="boton operador" onclick="agregarCaracter('/')">/</button>
+            <button class="boton operador" onclick="agregarOperador('/')">/</button>
 
-            <button class="boton numero" onclick="agregarCaracter('7')">7</button>
-            <button class="boton numero" onclick="agregarCaracter('8')">8</button>
-            <button class="boton numero" onclick="agregarCaracter('9')">9</button>
-            <button class="boton operador" onclick="agregarCaracter('*')">×</button>
+            <button class="boton numero" onclick="agregarNumero('7')">7</button>
+            <button class="boton numero" onclick="agregarNumero('8')">8</button>
+            <button class="boton numero" onclick="agregarNumero('9')">9</button>
+            <button class="boton operador" onclick="agregarOperador('*')">×</button>
 
-            <button class="boton numero" onclick="agregarCaracter('4')">4</button>
-            <button class="boton numero" onclick="agregarCaracter('5')">5</button>
-            <button class="boton numero" onclick="agregarCaracter('6')">6</button>
-            <button class="boton operador" onclick="agregarCaracter('-')">-</button>
+            <button class="boton numero" onclick="agregarNumero('4')">4</button>
+            <button class="boton numero" onclick="agregarNumero('5')">5</button>
+            <button class="boton numero" onclick="agregarNumero('6')">6</button>
+            <button class="boton operador" onclick="agregarOperador('-')">-</button>
 
-            <button class="boton numero" onclick="agregarCaracter('1')">1</button>
-            <button class="boton numero" onclick="agregarCaracter('2')">2</button>
-            <button class="boton numero" onclick="agregarCaracter('3')">3</button>
-            <button class="boton operador" onclick="agregarCaracter('+')">+</button>
+            <button class="boton numero" onclick="agregarNumero('1')">1</button>
+            <button class="boton numero" onclick="agregarNumero('2')">2</button>
+            <button class="boton numero" onclick="agregarNumero('3')">3</button>
+            <button class="boton operador" onclick="agregarOperador('+')">+</button>
 
-            <button class="boton cero numero" onclick="agregarCaracter('0')">0</button>
-            <button class="boton numero" onclick="agregarCaracter('.')">.</button>
-            <button class="boton igual">=</button>
+            <button class="boton cero numero" onclick="agregarNumero('0')">0</button>
+            <button class="boton numero" onclick="agregarNumero('.')">.</button>
+            <button class="boton igual" onclick="calcular()">=</button>
         </div>
     </div>
 
     <script>
         let pantallaValor = '0';
+        let operadorActual = null;
+        let valorAnterior = null;
+        let reiniciarPantalla = false;
 
         function actualizarPantalla() {
             document.getElementById('pantalla').textContent = pantallaValor;
         }
 
-        function agregarCaracter(caracter) {
-            if (pantallaValor === '0') {
-                pantallaValor = caracter;
+        function agregarNumero(numero) {
+            if (reiniciarPantalla) {
+                pantallaValor = numero;
+                reiniciarPantalla = false;
             } else {
-                pantallaValor += caracter;
+                if (pantallaValor === '0' && numero !== '.') {
+                    pantallaValor = numero;
+                } else {
+                    if (numero === '.' && pantallaValor.includes('.')) {
+                        return;
+                    }
+                    pantallaValor += numero;
+                }
             }
+            actualizarPantalla();
+        }
+
+        function agregarOperador(operador) {
+            if (valorAnterior !== null && operadorActual !== null && !reiniciarPantalla) {
+                calcular();
+            }
+            valorAnterior = parseFloat(pantallaValor);
+            operadorActual = operador;
+            reiniciarPantalla = true;
+        }
+
+        async function calcular() {
+            if (operadorActual === null || valorAnterior === null) {
+                return;
+            }
+
+            const valorActual = parseFloat(pantallaValor);
+
+            // Solo la división está implementada
+            if (operadorActual === '/') {
+                try {
+                    const response = await fetch('/dividir', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+            }
+            // Las demás operaciones no están implementadas aún
+
+            operadorActual = null;
+            valorAnterior = null;
+            reiniciarPantalla = true;
             actualizarPantalla();
         }
 
         function limpiar() {
             pantallaValor = '0';
+            operadorActual = null;
+            valorAnterior = null;
+            reiniciarPantalla = false;
             actualizarPantalla();
         }
 
