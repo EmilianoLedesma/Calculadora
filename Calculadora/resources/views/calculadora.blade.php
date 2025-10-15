@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Calculadora Sencilla</title>
     <style>
         * {
@@ -191,36 +192,36 @@
             reiniciarPantalla = true;
         }
 
-        function calcular() {
+        async function calcular() {
             if (operadorActual === null || valorAnterior === null) {
                 return;
             }
 
             const valorActual = parseFloat(pantallaValor);
-            let resultado = 0;
 
-            switch (operadorActual) {
-                case '+':
-                    resultado = valorAnterior + valorActual;
-                    break;
-                case '-':
-                    resultado = valorAnterior - valorActual;
-                    break;
-                case '*':
-                    resultado = valorAnterior * valorActual;
-                    break;
-                case '/':
-                    if (valorActual === 0) {
-                        pantallaValor = 'Error';
-                        actualizarPantalla();
-                        limpiar();
-                        return;
-                    }
-                    resultado = valorAnterior / valorActual;
-                    break;
+            // Solo la multiplicación está implementada
+            if (operadorActual === '*') {
+                try {
+                    const response = await fetch('/multiplicar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    const data = await response.json();
+                    pantallaValor = data.resultado.toString();
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
             }
+            // Las demás operaciones no están implementadas aún
 
-            pantallaValor = resultado.toString();
             operadorActual = null;
             valorAnterior = null;
             reiniciarPantalla = true;
