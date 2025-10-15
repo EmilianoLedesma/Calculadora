@@ -130,119 +130,30 @@
         <div class="calculadora">
             <div class="pantalla" id="pantalla">0</div>
 
-            <button class="boton limpiar" onclick="limpiar()">C</button>
-            <button class="boton operador" onclick="borrar()">←</button>
-            <button class="boton operador" onclick="agregarOperador('/')">/</button>
+            <button class="boton limpiar">C</button>
+            <button class="boton operador">←</button>
+            <button class="boton operador">/</button>
 
-            <button class="boton numero" onclick="agregarNumero('7')">7</button>
-            <button class="boton numero" onclick="agregarNumero('8')">8</button>
-            <button class="boton numero" onclick="agregarNumero('9')">9</button>
-            <button class="boton operador" onclick="agregarOperador('*')">×</button>
+            <button class="boton numero">7</button>
+            <button class="boton numero">8</button>
+            <button class="boton numero">9</button>
+            <button class="boton operador">×</button>
 
-            <button class="boton numero" onclick="agregarNumero('4')">4</button>
-            <button class="boton numero" onclick="agregarNumero('5')">5</button>
-            <button class="boton numero" onclick="agregarNumero('6')">6</button>
-            <button class="boton operador" onclick="agregarOperador('-')">-</button>
+            <button class="boton numero">4</button>
+            <button class="boton numero">5</button>
+            <button class="boton numero">6</button>
+            <button class="boton operador">-</button>
 
-            <button class="boton numero" onclick="agregarNumero('1')">1</button>
-            <button class="boton numero" onclick="agregarNumero('2')">2</button>
-            <button class="boton numero" onclick="agregarNumero('3')">3</button>
-            <button class="boton operador" onclick="agregarOperador('+')">+</button>
+            <button class="boton numero">1</button>
+            <button class="boton numero">2</button>
+            <button class="boton numero">3</button>
+            <button class="boton operador">+</button>
 
-            <button class="boton cero numero" onclick="agregarNumero('0')">0</button>
-            <button class="boton numero" onclick="agregarNumero('.')">.</button>
-            <button class="boton igual" onclick="calcular()">=</button>
+            <button class="boton cero numero">0</button>
+            <button class="boton numero">.</button>
+            <button class="boton igual">=</button>
         </div>
     </div>
 
-    <script>
-        let pantallaValor = '0';
-        let operadorActual = null;
-        let valorAnterior = null;
-        let reiniciarPantalla = false;
-
-        function actualizarPantalla() {
-            document.getElementById('pantalla').textContent = pantallaValor;
-        }
-
-        function agregarNumero(numero) {
-            if (reiniciarPantalla) {
-                pantallaValor = numero;
-                reiniciarPantalla = false;
-            } else {
-                if (pantallaValor === '0' && numero !== '.') {
-                    pantallaValor = numero;
-                } else {
-                    if (numero === '.' && pantallaValor.includes('.')) {
-                        return;
-                    }
-                    pantallaValor += numero;
-                }
-            }
-            actualizarPantalla();
-        }
-
-        function agregarOperador(operador) {
-            if (valorAnterior !== null && operadorActual !== null && !reiniciarPantalla) {
-                calcular();
-            }
-            valorAnterior = parseFloat(pantallaValor);
-            operadorActual = operador;
-            reiniciarPantalla = true;
-        }
-
-        function calcular() {
-            if (operadorActual === null || valorAnterior === null) {
-                return;
-            }
-
-            const valorActual = parseFloat(pantallaValor);
-            let resultado = 0;
-
-            switch (operadorActual) {
-                case '+':
-                    resultado = valorAnterior + valorActual;
-                    break;
-                case '-':
-                    resultado = valorAnterior - valorActual;
-                    break;
-                case '*':
-                    resultado = valorAnterior * valorActual;
-                    break;
-                case '/':
-                    if (valorActual === 0) {
-                        pantallaValor = 'Error';
-                        actualizarPantalla();
-                        limpiar();
-                        return;
-                    }
-                    resultado = valorAnterior / valorActual;
-                    break;
-            }
-
-            pantallaValor = resultado.toString();
-            operadorActual = null;
-            valorAnterior = null;
-            reiniciarPantalla = true;
-            actualizarPantalla();
-        }
-
-        function limpiar() {
-            pantallaValor = '0';
-            operadorActual = null;
-            valorAnterior = null;
-            reiniciarPantalla = false;
-            actualizarPantalla();
-        }
-
-        function borrar() {
-            if (pantallaValor.length > 1) {
-                pantallaValor = pantallaValor.slice(0, -1);
-            } else {
-                pantallaValor = '0';
-            }
-            actualizarPantalla();
-        }
-    </script>
 </body>
 </html>
