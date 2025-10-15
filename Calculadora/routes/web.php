@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/calculadora', function () {
     return view('calculadora');
 });
+
+Route::get('/tibio', function () {
+    return 'Tibio';
+});
