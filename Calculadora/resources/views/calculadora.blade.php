@@ -130,30 +130,60 @@
         <div class="calculadora">
             <div class="pantalla" id="pantalla">0</div>
 
-            <button class="boton limpiar">C</button>
-            <button class="boton operador">←</button>
-            <button class="boton operador">/</button>
+            <button class="boton limpiar" onclick="limpiar()">C</button>
+            <button class="boton operador" onclick="borrar()">←</button>
+            <button class="boton operador" onclick="agregarCaracter('/')">/</button>
 
-            <button class="boton numero">7</button>
-            <button class="boton numero">8</button>
-            <button class="boton numero">9</button>
-            <button class="boton operador">×</button>
+            <button class="boton numero" onclick="agregarCaracter('7')">7</button>
+            <button class="boton numero" onclick="agregarCaracter('8')">8</button>
+            <button class="boton numero" onclick="agregarCaracter('9')">9</button>
+            <button class="boton operador" onclick="agregarCaracter('*')">×</button>
 
-            <button class="boton numero">4</button>
-            <button class="boton numero">5</button>
-            <button class="boton numero">6</button>
-            <button class="boton operador">-</button>
+            <button class="boton numero" onclick="agregarCaracter('4')">4</button>
+            <button class="boton numero" onclick="agregarCaracter('5')">5</button>
+            <button class="boton numero" onclick="agregarCaracter('6')">6</button>
+            <button class="boton operador" onclick="agregarCaracter('-')">-</button>
 
-            <button class="boton numero">1</button>
-            <button class="boton numero">2</button>
-            <button class="boton numero">3</button>
-            <button class="boton operador">+</button>
+            <button class="boton numero" onclick="agregarCaracter('1')">1</button>
+            <button class="boton numero" onclick="agregarCaracter('2')">2</button>
+            <button class="boton numero" onclick="agregarCaracter('3')">3</button>
+            <button class="boton operador" onclick="agregarCaracter('+')">+</button>
 
-            <button class="boton cero numero">0</button>
-            <button class="boton numero">.</button>
+            <button class="boton cero numero" onclick="agregarCaracter('0')">0</button>
+            <button class="boton numero" onclick="agregarCaracter('.')">.</button>
             <button class="boton igual">=</button>
         </div>
     </div>
 
+    <script>
+        let pantallaValor = '0';
+
+        function actualizarPantalla() {
+            document.getElementById('pantalla').textContent = pantallaValor;
+        }
+
+        function agregarCaracter(caracter) {
+            if (pantallaValor === '0') {
+                pantallaValor = caracter;
+            } else {
+                pantallaValor += caracter;
+            }
+            actualizarPantalla();
+        }
+
+        function limpiar() {
+            pantallaValor = '0';
+            actualizarPantalla();
+        }
+
+        function borrar() {
+            if (pantallaValor.length > 1) {
+                pantallaValor = pantallaValor.slice(0, -1);
+            } else {
+                pantallaValor = '0';
+            }
+            actualizarPantalla();
+        }
+    </script>
 </body>
 </html>
