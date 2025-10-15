@@ -11,6 +11,7 @@ Route::get('/calculadora', function () {
     return view('calculadora');
 });
 
+Route::post('/multiplicar', [CalculadoraController::class, 'multiplicar'])->name('multiplicar');
 Route::get('/tibio', function () {
     return 'Tibio';
 });

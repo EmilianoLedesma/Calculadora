@@ -199,6 +199,10 @@
 
             const valorActual = parseFloat(pantallaValor);
 
+            // Solo la multiplicación está implementada
+            if (operadorActual === '*') {
+                try {
+                    const response = await fetch('/multiplicar', {
             // Solo la división está implementada
             if (operadorActual === '/') {
                 try {
@@ -214,6 +218,8 @@
                         })
                     });
 
+                    const data = await response.json();
+                    pantallaValor = data.resultado.toString();
                     if (!response.ok) {
                         const errorData = await response.json();
                         pantallaValor = 'Error';

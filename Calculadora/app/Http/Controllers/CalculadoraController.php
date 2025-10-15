@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class CalculadoraController extends Controller
 {
+    public function multiplicar(Request $request)
     public function dividir(Request $request)
     {
         $request->validate([
@@ -15,6 +16,7 @@ class CalculadoraController extends Controller
 
         $num1 = $request->input('num1');
         $num2 = $request->input('num2');
+        $resultado = $num1 * $num2;
 
         // Validar que no se divida entre cero
         if ($num2 == 0) {
