@@ -185,6 +185,10 @@
 
         function agregarOperador(operador) {
             if (valorAnterior !== null && operadorActual !== null && !reiniciarPantalla) {
+                if (operadorActual === '/') {
+                    dividir();
+                    return;
+                }
                 calcular();
             }
             valorAnterior = parseFloat(pantallaValor);
@@ -192,13 +196,46 @@
             reiniciarPantalla = true;
         }
 
+        async function dividir() {
+            if (valorAnterior !== null && operadorActual === '/') {
+                const valorActual = parseFloat(pantallaValor);
+                try {
+                    const response = await fetch('/dividir', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.resultado !== undefined) {
+                        pantallaValor = data.resultado.toString();
+                    } else {
+                        pantallaValor = data.error || 'Error';
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+                operadorActual = null;
+                valorAnterior = null;
+                reiniciarPantalla = true;
+                actualizarPantalla();
+            }
+        }
+
         async function calcular() {
             if (operadorActual === null || valorAnterior === null) {
                 return;
             }
-
             const valorActual = parseFloat(pantallaValor);
-
+            if (operadorActual === '/') {
+                dividir();
+                return;
+            }
             // Solo la multiplicación está implementada
             if (operadorActual === '*') {
                 try {
