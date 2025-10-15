@@ -275,6 +275,31 @@
                     pantallaValor = 'Error';
                 }
             }
+            // Resta
+            else if (operadorActual === '-') {
+                try {
+                    const response = await fetch('/restar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    if (!response.ok) {
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+            }
             // Las demás operaciones no están implementadas aún
 
             operadorActual = null;
