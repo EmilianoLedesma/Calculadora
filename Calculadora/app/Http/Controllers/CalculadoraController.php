@@ -83,4 +83,28 @@ class CalculadoraController extends Controller
             'resultado' => $resultado
         ]);
     }
+
+    public function potencia(Request $request)
+    {
+        $request->validate([
+            'num1' => 'required|numeric',
+            'num2' => 'required|numeric'
+        ]);
+
+        $base = $request->input('num1');
+        $exponente = $request->input('num2');
+
+        // Manejo básico de errores: potencia con base negativa y exponente no entero
+        if ($base < 0 && floor($exponente) != $exponente) {
+            return response()->json([
+                'error' => 'No se puede elevar número negativo a exponente fraccionario'
+            ], 400);
+        }
+
+        $resultado = pow($base, $exponente);
+
+        return response()->json([
+            'resultado' => $resultado
+        ]);
+    }
 }
