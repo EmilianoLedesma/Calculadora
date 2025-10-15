@@ -18,3 +18,4 @@ Route::get('/tibio', function () {
 Route::post('/multiplicar', [CalculadoraController::class, 'multiplicar'])->name('multiplicar');
 Route::post('/dividir', [CalculadoraController::class, 'dividir'])->name('dividir');
 Route::post('/raiz', [CalculadoraController::class, 'raiz'])->name('raiz');
+Route::post('/sumar', [CalculadoraController::class, 'sumar'])->name('sumar');
