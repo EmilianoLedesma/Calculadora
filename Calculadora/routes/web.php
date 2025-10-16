@@ -20,3 +20,4 @@ Route::post('/dividir', [CalculadoraController::class, 'dividir'])->name('dividi
 Route::post('/raiz', [CalculadoraController::class, 'raiz'])->name('raiz');
 Route::post('/sumar', [CalculadoraController::class, 'sumar'])->name('sumar');
 Route::post('/potencia', [CalculadoraController::class, 'potencia'])->name('potencia');
+Route::post('/restar', [CalculadoraController::class, 'restar'])->name('restar');

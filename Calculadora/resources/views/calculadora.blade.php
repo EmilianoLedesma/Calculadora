@@ -133,7 +133,7 @@
 
             <button class="boton limpiar" onclick="limpiar()">C</button>
             <button class="boton operador" onclick="borrar()">←</button>
-            <button class="boton operador" onclick="calcularRaiz()">√</button>
+            <button class="boton operador" onclick="agregarOperador('^')">^</button>
             <button class="boton operador" onclick="agregarOperador('/')">/</button>
 
             <button class="boton numero" onclick="agregarNumero('7')">7</button>
@@ -250,6 +250,31 @@
                     pantallaValor = 'Error';
                 }
             }
+            // Potencia
+            else if (operadorActual === '^') {
+                try {
+                    const response = await fetch('/potencia', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    if (!response.ok) {
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+            }
             // Suma
             else if (operadorActual === '+') {
                 try {
@@ -275,7 +300,31 @@
                     pantallaValor = 'Error';
                 }
             }
-            // Las demás operaciones no están implementadas aún
+            // Resta
+            else if (operadorActual === '-') {
+                try {
+                    const response = await fetch('/restar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            num1: valorAnterior,
+                            num2: valorActual
+                        })
+                    });
+
+                    if (!response.ok) {
+                        pantallaValor = 'Error';
+                    } else {
+                        const data = await response.json();
+                        pantallaValor = data.resultado.toString();
+                    }
+                } catch (error) {
+                    pantallaValor = 'Error';
+                }
+            }
 
             operadorActual = null;
             valorAnterior = null;
